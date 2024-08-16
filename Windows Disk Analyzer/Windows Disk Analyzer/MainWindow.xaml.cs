@@ -11,6 +11,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Diagnostics;
+using Microsoft.VisualBasic;
 
 namespace Windows_Disk_Analyzer
 {
@@ -19,41 +21,47 @@ namespace Windows_Disk_Analyzer
     /// </summary>
     public partial class MainWindow : Window
     {
+        Func<double, string> ToHumaanbleSizes = (x) => Analyzer.BytesToString((long)x);
+
         public MainWindow()
         {
             InitializeComponent();
-            SeriesCollection = new SeriesCollection
-            {
-                new PieSeries
-                {
-                    Title = "Chrome",
-                    Values = new ChartValues<ObservableValue> { new ObservableValue(8) },
-                    DataLabels = true
-                },
-                new PieSeries
-                {
-                    Title = "Mozilla",
-                    Values = new ChartValues<ObservableValue> { new ObservableValue(6) },
-                    DataLabels = true
-                },
-                new PieSeries
-                {
-                    Title = "Opera",
-                    Values = new ChartValues<ObservableValue> { new ObservableValue(10) },
-                    DataLabels = true
-                },
-                new PieSeries
-                {
-                    Title = "Explorer",
-                    Values = new ChartValues<ObservableValue> { new ObservableValue(4) },
-                    DataLabels = true
-                }
-            };
+            Chart.AxisY.Add(new Axis { LabelFormatter = ToHumaanbleSizes });
+            SeriesCollection = new SeriesCollection();
+            ThreadPool.SetMaxThreads(6, 4);
 
             //adding values or series will update and animate the chart automatically
             //SeriesCollection.Add(new PieSeries());
             //SeriesCollection[0].Values.Add(5);
+            Analyzer disk_analized = new Analyzer("C:/");
+            long system_files_Size = 0;
 
+            foreach (var fil in disk_analized.Get_elements_in_dir())
+            {
+                if (fil.Attributes.ToString().IndexOf(FileAttribute.System.ToString()) > -1)
+                {
+                    system_files_Size += fil.size;
+                    continue;
+                }
+
+                SeriesCollection.Add(new PieSeries
+                {
+                    Title = fil.Name,
+                    Stroke = Brushes.Transparent,
+                    Values = new ChartValues<ObservableValue> { new ObservableValue(fil.size) },
+                    DataLabels = true
+                });
+            }
+
+            SeriesCollection.Add(new PieSeries
+            {
+                Title = "System Files",
+                Values = new ChartValues<ObservableValue> { new ObservableValue(system_files_Size) },
+                DataLabels = true
+            });
+
+
+            Size_label.Text = "Size: " + disk_analized.get_Formated_size();
             DataContext = this;
         }
 
@@ -117,6 +125,9 @@ namespace Windows_Disk_Analyzer
         private void RestartOnClick(object sender, RoutedEventArgs e)
         {
             Chart.Update(true, true);
+            Chart.HideLegend();
+            Chart.ToolTip = null;
+            Chart.Hoverable = false;
         }
     }
 }

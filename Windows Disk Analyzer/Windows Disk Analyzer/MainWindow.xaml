@@ -4,8 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Windows_Disk_Analyzer" xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        mc:Ignorable="d" Background="#3d3d3d"
+        Title="MainWindow" MinHeight="450" MinWidth="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
@@ -30,17 +30,17 @@
             <Button  Height="30" Click="RemoveValueOnClick" MinWidth="30">
                 -
             </Button>
+            <TextBlock x:Name="Size_label"
+                VerticalAlignment="Center" FontSize="13" Margin="10,0">
+                Size: 100000GB
+            </TextBlock>
 
         </StackPanel>
 
         <lvc:PieChart Name="Chart" Grid.Row="1" Series="{Binding SeriesCollection}"
-                      LegendLocation="Right" InnerRadius="100" Margin="0 15">
-            <lvc:PieChart.ChartLegend>
-                <lvc:DefaultLegend BulletSize="20"></lvc:DefaultLegend>
-            </lvc:PieChart.ChartLegend>
-            <lvc:PieChart.DataTooltip>
-                <lvc:DefaultTooltip BulletSize="20"></lvc:DefaultTooltip>
-            </lvc:PieChart.DataTooltip>
+                      LegendLocation="Right" InnerRadius="100" Margin="0 15" Hoverable="False" BorderBrush="#FF752424"
+                      >
+
         </lvc:PieChart>
     </Grid>
 </Window>
