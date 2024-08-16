@@ -34,21 +34,23 @@ namespace Windows_Disk_Analyzer
             //SeriesCollection.Add(new PieSeries());
             //SeriesCollection[0].Values.Add(5);
             Analyzer disk_analized = new Analyzer("C:/");
+            var elements_list = disk_analized.Get_elements_in_dir();
+            elements_list.Sort((x, y) => y.size.CompareTo(x.size));
             long system_files_Size = 0;
 
-            foreach (var fil in disk_analized.Get_elements_in_dir())
+            for (int i = 0; i < 8 && i < elements_list.Count; i++)
             {
-                if (fil.Attributes.ToString().IndexOf(FileAttribute.System.ToString()) > -1)
+                if (elements_list[i].Attributes.ToString().IndexOf(FileAttribute.System.ToString()) > -1)
                 {
-                    system_files_Size += fil.size;
+                    system_files_Size += elements_list[i].size;
                     continue;
                 }
 
                 SeriesCollection.Add(new PieSeries
                 {
-                    Title = fil.Name,
+                    Title = elements_list[i].Name,
                     Stroke = Brushes.Transparent,
-                    Values = new ChartValues<ObservableValue> { new ObservableValue(fil.size) },
+                    Values = new ChartValues<ObservableValue> { new ObservableValue(elements_list[i].size) },
                     DataLabels = true
                 });
             }
@@ -60,6 +62,9 @@ namespace Windows_Disk_Analyzer
                 DataLabels = true
             });
 
+            Chart.HideLegend();
+            Chart.ToolTip = null;
+            Chart.Hoverable = false;
 
             Size_label.Text = "Size: " + disk_analized.get_Formated_size();
             DataContext = this;
@@ -125,9 +130,6 @@ namespace Windows_Disk_Analyzer
         private void RestartOnClick(object sender, RoutedEventArgs e)
         {
             Chart.Update(true, true);
-            Chart.HideLegend();
-            Chart.ToolTip = null;
-            Chart.Hoverable = false;
         }
     }
 }

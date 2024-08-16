@@ -23,22 +23,42 @@ namespace Windows_Disk_Analyzer
         {
             long size = 0;
             List<Task<long>> tasks = new List<Task<long>>();
-            
+            if (!dir_info.Exists)
+                return 0;
+
+            string last_tested = "";
+
             try
             {
                 foreach (var file in dir_info.EnumerateFiles())
                 {
+                    if (!file.Exists)
+                    {
+                        Debug.WriteLine(file.FullName + " File not exists");
+                        continue;
+                    }
+
+                    last_tested = "[FILE]" + file.Name;
+                    if ((file.UnixFileMode & UnixFileMode.UserRead) != 0 || (file.UnixFileMode & UnixFileMode.GroupRead) != 0)
                     size += file.Length;
                 }
                 foreach(var dir in dir_info.EnumerateDirectories())
                 {
+                    last_tested = "[DIR]" + dir.FullName;
+                    if (!dir.Exists || dir.Attributes.ToString().IndexOf("system") != -1)
+                    {
+                        Debug.WriteLine(dir.FullName + " Dir not exists" + (dir.Attributes.ToString().IndexOf("system")));
+                        continue ;
+                    }
+
                     tasks.Add(new Task<long>(() => DeepSizeScan(dir)));
                     tasks.Last().Start();
                 }
 
             }
-            catch
+            catch (Exception err)
             {
+                Debug.WriteLine("!" + last_tested + " >> " + err.Message);
                 return 0;
             }
 
