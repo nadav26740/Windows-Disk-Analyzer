@@ -26,11 +26,21 @@ namespace Windows_Disk_Analyzer
             if (!dir_info.Exists)
                 return 0;
 
-            string last_tested = "";
-
             try
             {
-                foreach (var file in dir_info.EnumerateFiles())
+                dir_info.EnumerateFiles();
+            }
+            catch (UnauthorizedAccessException err)
+            {
+                return 0;
+            }
+
+
+            string last_tested = "";
+            
+            foreach (var file in dir_info.EnumerateFiles())
+            {
+                try
                 {
                     if (!file.Exists)
                     {
@@ -40,12 +50,24 @@ namespace Windows_Disk_Analyzer
 
                     last_tested = "[FILE]" + file.Name;
                     if ((file.UnixFileMode & UnixFileMode.UserRead) != 0 || (file.UnixFileMode & UnixFileMode.GroupRead) != 0)
-                    size += file.Length;
+                    {
+                        size += file.Length;
+
+                    }
                 }
-                foreach(var dir in dir_info.EnumerateDirectories())
+                catch (Exception err)
+                {
+                    Debug.WriteLine("!" + last_tested + " >> " + err.Message);
+                    return 0;
+                }
+            }
+            
+            try
+            {
+                foreach (var dir in dir_info.EnumerateDirectories())
                 {
                     last_tested = "[DIR]" + dir.FullName;
-                    if (!dir.Exists || dir.Attributes.ToString().IndexOf("system") != -1)
+                    if (!dir.Exists || dir.Attributes.ToString().IndexOf(FileAttributes.System.ToString()) != -1)
                     {
                         Debug.WriteLine(dir.FullName + " Dir not exists" + (dir.Attributes.ToString().IndexOf("system")));
                         continue ;

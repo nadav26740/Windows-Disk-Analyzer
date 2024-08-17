@@ -38,8 +38,12 @@
         </StackPanel>
 
         <lvc:PieChart Name="Chart" Grid.Row="1" Series="{Binding SeriesCollection}"
-                      LegendLocation="Right" InnerRadius="100" Margin="0 15" Hoverable="False" BorderBrush="#FF752424"
+                      LegendLocation="Right" InnerRadius="100" Margin="0 15" 
+                      Hoverable="False" BorderBrush="#FF752424"
                       >
+            <lvc:PieChart.ChartLegend>
+                <lvc:DefaultLegend Foreground="Snow"/>
+            </lvc:PieChart.ChartLegend>
 
         </lvc:PieChart>
     </Grid>

@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
-using Microsoft.VisualBasic;
+using System.IO;
 
 namespace Windows_Disk_Analyzer
 {
@@ -40,7 +40,7 @@ namespace Windows_Disk_Analyzer
 
             for (int i = 0; i < 8 && i < elements_list.Count; i++)
             {
-                if (elements_list[i].Attributes.ToString().IndexOf(FileAttribute.System.ToString()) > -1)
+                if (elements_list[i].Attributes.ToString().IndexOf(FileAttributes.System.ToString()) > -1)
                 {
                     system_files_Size += elements_list[i].size;
                     continue;
