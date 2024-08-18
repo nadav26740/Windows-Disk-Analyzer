@@ -18,6 +18,8 @@ namespace Windows_Disk_Analyzer
         public DirectoryInfo dir_info;
     }
 
+    
+
     public class Analyzer
     {
         static private Dictionary<string, Files_presentor> HeavyScanned = new Dictionary<string, Files_presentor>();
@@ -178,6 +180,11 @@ namespace Windows_Disk_Analyzer
         public string GetParent()
         {
             return dir_info.Parent == null ? dir_info.FullName : dir_info.Parent.FullName; 
+        }
+
+        public string GetCurrentPath()
+        {
+            return dir_info.FullName;
         }
 
         public IEnumerable<FileInfo> GetFiles() => dir_info.EnumerateFiles();

@@ -22,10 +22,23 @@ namespace Windows_Disk_Analyzer
     public partial class MainWindow : Window
     {
         Func<double, string> ToHumaanbleSizes = (x) => Analyzer.BytesToString((long)x);
-        DriveInfo[] root_drives;
+        List<Drive_presentor> root_drives = new List<Drive_presentor>();
         Analyzer Current_analyze;
 
+        public class Drive_presentor
+        {
+            public Drive_presentor(DriveInfo info)
+            {
+                drive_info = info;
+            }
 
+            public DriveInfo drive_info;
+            
+            public override string ToString()
+            {
+                return drive_info.Name + " [" + Analyzer.BytesToString(drive_info.TotalSize) + " / " + Analyzer.BytesToString(drive_info.TotalSize - drive_info.TotalFreeSpace) + "]";
+            }
+        }
 
         class file_list_presentor
         {
@@ -34,9 +47,11 @@ namespace Windows_Disk_Analyzer
                 this.file_name = name;
                 this.file_size = Analyzer.BytesToString(size);
                 this.files_Presentor = files_Presentor;
+                file_attributes = files_Presentor.Attributes.ToString();
             }
             public string file_name { get; private set; }
             public string file_size { get; private set; }
+            public string file_attributes { get; private set; }
             public Files_presentor files_Presentor { get; private set; }
         }
 
@@ -49,7 +64,11 @@ namespace Windows_Disk_Analyzer
             File_Chart.AxisY.Add(new Axis { LabelFormatter = ToHumaanbleSizes });
             SeriesCollection = new SeriesCollection();
             ThreadPool.SetMaxThreads(6, 4);
-            root_drives = DriveInfo.GetDrives();
+            foreach (DriveInfo driver in DriveInfo.GetDrives())
+            {
+                root_drives.Add(new Drive_presentor (driver));
+            }
+
             //adding values or series will update and animate the chart automatically
             //SeriesCollection.Add(new PieSeries());
             //SeriesCollection[0].Values.Add(5);
@@ -73,7 +92,7 @@ namespace Windows_Disk_Analyzer
             var elements_list = Current_analyze.Get_elements_in_dir();
             elements_list.Sort((x, y) => y.size.CompareTo(x.size));
             long system_files_Size = 0;
-            long Other_files = 0;
+            long Other_files_size = 0;
 
             for (int i = 0; i < 8 && i < elements_list.Count; i++)
             {
@@ -94,7 +113,7 @@ namespace Windows_Disk_Analyzer
                 }
                 else
                 {
-                    Other_files += elements_list[i].size;
+                    Other_files_size += elements_list[i].size;
                 }
             }
 
@@ -106,18 +125,21 @@ namespace Windows_Disk_Analyzer
             FileList.ItemsSource = file_presentors;
             FileList.Items.Refresh();
 
-            SeriesCollection.Add(new PieSeries
-            {
-                Title = "System Files",
-                Values = new ChartValues<ObservableValue> { new ObservableValue(system_files_Size) },
-                DataLabels = true
-            });
-            SeriesCollection.Add(new PieSeries
-            {
-                Title = "Other",
-                Values = new ChartValues<ObservableValue> { new ObservableValue(Other_files) },
-                DataLabels = true
-            });
+            if (system_files_Size > 0)
+                SeriesCollection.Add(new PieSeries
+                {
+                    Title = "System Files",
+                    Values = new ChartValues<ObservableValue> { new ObservableValue(system_files_Size) },
+                    DataLabels = true
+                });
+
+            if (Other_files_size > 0)
+                SeriesCollection.Add(new PieSeries
+                {
+                    Title = "Other",
+                    Values = new ChartValues<ObservableValue> { new ObservableValue(Other_files_size) },
+                    DataLabels = true
+                });
 
 
             File_Chart.HideLegend();
@@ -125,6 +147,7 @@ namespace Windows_Disk_Analyzer
             File_Chart.Hoverable = false;
 
             Size_label.Text = "Size: " + Current_analyze.get_Formated_size();
+            Current_path_label.Text = Current_analyze.GetCurrentPath();
             DataContext = this;
         }
 
@@ -144,12 +167,22 @@ namespace Windows_Disk_Analyzer
 
         private void AnalyzeButton(object sender, RoutedEventArgs e)
         {
-            LoadDrive((Disk_ComboBox.SelectedItem as DriveInfo).Name);
+            LoadDrive((Disk_ComboBox.SelectedItem as Drive_presentor).drive_info.Name);
         }
 
         private void BackButtonClicked(object sender, RoutedEventArgs e)
         {
             LoadDrive(Current_analyze.GetParent());
+        }
+
+        private void File_Chart_DataClick(object sender, ChartPoint chartPoint)
+        {
+            int pressed_column_index = (int)chartPoint.X;
+            if (file_presentors[pressed_column_index].files_Presentor.dir_info != null)
+            {
+                LoadDrive(file_presentors[pressed_column_index].files_Presentor.dir_info.FullName);
+            }
+
         }
     }
 }
