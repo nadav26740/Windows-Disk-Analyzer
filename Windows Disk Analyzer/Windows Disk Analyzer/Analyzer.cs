@@ -15,10 +15,13 @@ namespace Windows_Disk_Analyzer
         public string Name;
         public string Attributes;
         public long size;
+        public DirectoryInfo dir_info;
     }
 
     public class Analyzer
     {
+        static private Dictionary<string, Files_presentor> HeavyScanned = new Dictionary<string, Files_presentor>();
+
         private static long DeepSizeScan(DirectoryInfo dir_info)
         {
             long size = 0;
@@ -93,7 +96,16 @@ namespace Windows_Disk_Analyzer
                 }
                 catch (Exception err) { Debug.WriteLine("ERROR in deepsearch [" + dir_info.FullName + "]" + err.Message); }
             }
-            
+
+            if (size > 3 * Math.Pow(1024, 3) && !HeavyScanned.ContainsKey(dir_info.FullName))
+            {
+                HeavyScanned.Add(dir_info.FullName, new Files_presentor 
+                    {   Attributes=dir_info.Attributes.ToString(),
+                        dir_info = dir_info,
+                        Name = dir_info.Name,
+                        size = size
+                    });
+            }
 
             return size;
         }
@@ -127,10 +139,15 @@ namespace Windows_Disk_Analyzer
                 Debug.Write("DIR> " + direc.FullName);
                 try
                 {
-                    long dir_size = DeepSizeScan(direc);
-                    dirsize += dir_size;
-                    files_in_dir.Add(new Files_presentor { Name = direc.Name, Attributes = direc.Attributes.ToString(), size = dir_size });
+                    long dir_size = HeavyScanned.ContainsKey(direc.FullName) ? HeavyScanned[direc.FullName].size : DeepSizeScan(direc);
+                    
 
+                    dirsize += dir_size;
+                    files_in_dir.Add(new Files_presentor { Name = direc.Name, Attributes = direc.Attributes.ToString(), size = dir_size, dir_info=direc });
+                    if (dir_size > 3 * Math.Pow(1024, 3) && !HeavyScanned.ContainsKey(dir_info.FullName))
+                    {
+                        HeavyScanned.Add(direc.FullName, files_in_dir.Last());
+                    }
 
                     Debug.Write(" = " + BytesToString(dir_size));
                 }
@@ -156,6 +173,11 @@ namespace Windows_Disk_Analyzer
         public string get_Formated_size()
         {
             return BytesToString(dirsize);
+        }
+
+        public string GetParent()
+        {
+            return dir_info.Parent == null ? dir_info.FullName : dir_info.Parent.FullName; 
         }
 
         public IEnumerable<FileInfo> GetFiles() => dir_info.EnumerateFiles();

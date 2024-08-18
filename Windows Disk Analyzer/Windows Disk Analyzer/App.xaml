@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:Windows_Disk_Analyzer"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary Source="StylesDict.xaml">
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

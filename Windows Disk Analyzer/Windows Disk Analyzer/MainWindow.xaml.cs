@@ -22,30 +22,61 @@ namespace Windows_Disk_Analyzer
     public partial class MainWindow : Window
     {
         Func<double, string> ToHumaanbleSizes = (x) => Analyzer.BytesToString((long)x);
+        DriveInfo[] root_drives;
+        Analyzer Current_analyze;
+
+
+
+        class file_list_presentor
+        {
+            public file_list_presentor(string name, long size , Files_presentor files_Presentor)
+            {
+                this.file_name = name;
+                this.file_size = Analyzer.BytesToString(size);
+                this.files_Presentor = files_Presentor;
+            }
+            public string file_name { get; private set; }
+            public string file_size { get; private set; }
+            public Files_presentor files_Presentor { get; private set; }
+        }
+
+        List<file_list_presentor> file_presentors = new List<file_list_presentor>();
 
         public MainWindow()
         {
+            
             InitializeComponent();
-            Chart.AxisY.Add(new Axis { LabelFormatter = ToHumaanbleSizes });
+            File_Chart.AxisY.Add(new Axis { LabelFormatter = ToHumaanbleSizes });
             SeriesCollection = new SeriesCollection();
             ThreadPool.SetMaxThreads(6, 4);
-
+            root_drives = DriveInfo.GetDrives();
             //adding values or series will update and animate the chart automatically
             //SeriesCollection.Add(new PieSeries());
             //SeriesCollection[0].Values.Add(5);
-            Analyzer disk_analized = new Analyzer("C:/");
-            var elements_list = disk_analized.Get_elements_in_dir();
+            Disk_ComboBox.Items.Clear();
+            foreach (var diskdrive in root_drives)
+            {
+                Disk_ComboBox.Items.Add(diskdrive);
+            }
+            Disk_ComboBox.SelectedIndex = 0;
+
+        }
+
+        public SeriesCollection SeriesCollection { get; set; }
+        
+        void LoadDrive(string dir_path)
+        {
+            Current_analyze = new Analyzer(dir_path);
+            SeriesCollection.Clear();
+
+
+            var elements_list = Current_analyze.Get_elements_in_dir();
             elements_list.Sort((x, y) => y.size.CompareTo(x.size));
             long system_files_Size = 0;
+            long Other_files = 0;
 
             for (int i = 0; i < 8 && i < elements_list.Count; i++)
             {
-                if (elements_list[i].Attributes.ToString().IndexOf(FileAttributes.System.ToString()) > -1)
-                {
-                    system_files_Size += elements_list[i].size;
-                    continue;
-                }
-
                 SeriesCollection.Add(new PieSeries
                 {
                     Title = elements_list[i].Name,
@@ -55,81 +86,70 @@ namespace Windows_Disk_Analyzer
                 });
             }
 
+            for (int i = 8; i < elements_list.Count; i++)
+            {
+                if (elements_list[i].Attributes.ToString().IndexOf(FileAttributes.System.ToString()) > -1)
+                {
+                    system_files_Size += elements_list[i].size;
+                }
+                else
+                {
+                    Other_files += elements_list[i].size;
+                }
+            }
+
+            file_presentors.Clear();
+            for (int i = 0; i < elements_list.Count; i++)
+            {
+                file_presentors.Add(new file_list_presentor(elements_list[i].Name, elements_list[i].size, elements_list[i]));
+            }
+            FileList.ItemsSource = file_presentors;
+            FileList.Items.Refresh();
+
             SeriesCollection.Add(new PieSeries
             {
                 Title = "System Files",
                 Values = new ChartValues<ObservableValue> { new ObservableValue(system_files_Size) },
                 DataLabels = true
             });
+            SeriesCollection.Add(new PieSeries
+            {
+                Title = "Other",
+                Values = new ChartValues<ObservableValue> { new ObservableValue(Other_files) },
+                DataLabels = true
+            });
 
-            Chart.HideLegend();
-            Chart.ToolTip = null;
-            Chart.Hoverable = false;
 
-            Size_label.Text = "Size: " + disk_analized.get_Formated_size();
+            File_Chart.HideLegend();
+            File_Chart.ToolTip = null;
+            File_Chart.Hoverable = false;
+
+            Size_label.Text = "Size: " + Current_analyze.get_Formated_size();
             DataContext = this;
         }
 
-        public SeriesCollection SeriesCollection { get; set; }
-
-        private void UpdateAllOnClick(object sender, RoutedEventArgs e)
+        private void FileList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var r = new Random();
-
-            foreach (var series in SeriesCollection)
+            if (FileList.SelectedItem == null)
             {
-                foreach (var observable in series.Values.Cast<ObservableValue>())
-                {
-                    observable.Value = r.Next(0, 10);
-                }
-            }
-        }
-
-        private void AddSeriesOnClick(object sender, RoutedEventArgs e)
-        {
-            var r = new Random();
-            var c = SeriesCollection.Count > 0 ? SeriesCollection[0].Values.Count : 5;
-
-            var vals = new ChartValues<ObservableValue>();
-
-            for (var i = 0; i < c; i++)
-            {
-                vals.Add(new ObservableValue(r.Next(0, 10)));
+                return;
             }
 
-            SeriesCollection.Add(new PieSeries
-            {
-                Values = vals
-            });
+            file_list_presentor selected_item = (FileList.SelectedItem as file_list_presentor);
+            if (selected_item.files_Presentor.dir_info == null)
+                return;
+
+            LoadDrive(selected_item.files_Presentor.dir_info.FullName);
         }
 
-        private void RemoveSeriesOnClick(object sender, RoutedEventArgs e)
+        private void AnalyzeButton(object sender, RoutedEventArgs e)
         {
-            if (SeriesCollection.Count > 0)
-                SeriesCollection.RemoveAt(0);
+            LoadDrive((Disk_ComboBox.SelectedItem as DriveInfo).Name);
         }
 
-        private void AddValueOnClick(object sender, RoutedEventArgs e)
+        private void BackButtonClicked(object sender, RoutedEventArgs e)
         {
-            var r = new Random();
-            foreach (var series in SeriesCollection)
-            {
-                series.Values.Add(new ObservableValue(r.Next(0, 10)));
-            }
-        }
-
-        private void RemoveValueOnClick(object sender, RoutedEventArgs e)
-        {
-            foreach (var series in SeriesCollection)
-            {
-                if (series.Values.Count > 0)
-                    series.Values.RemoveAt(0);
-            }
-        }
-
-        private void RestartOnClick(object sender, RoutedEventArgs e)
-        {
-            Chart.Update(true, true);
+            LoadDrive(Current_analyze.GetParent());
         }
     }
 }
