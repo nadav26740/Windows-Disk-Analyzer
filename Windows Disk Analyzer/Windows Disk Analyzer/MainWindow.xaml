@@ -4,43 +4,93 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Windows_Disk_Analyzer" xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        mc:Ignorable="d" Background="#3d3d3d" Foreground="Snow"
+        Title="MainWindow" MinHeight="600" MinWidth="1100">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <Button Click="UpdateAllOnClick" Padding="10 0">
-                Move All
-            </Button>
-            <Button Click="RestartOnClick">Restart</Button>
-            <TextBlock VerticalAlignment="Center" Padding="10 0">Series</TextBlock>
-            <Button Click="AddSeriesOnClick" MinWidth="30">
-                +
-            </Button>
-            <Button Click="RemoveSeriesOnClick" MinWidth="30">
-                -
-            </Button>
-            <TextBlock VerticalAlignment="Center" Padding="10 0">Values</TextBlock>
-            <Button Height="30" Click="AddValueOnClick" MinWidth="30">
-                +
-            </Button>
-            <Button  Height="30" Click="RemoveValueOnClick" MinWidth="30">
-                -
-            </Button>
+        <Grid Grid.Row="0" Height="35" Background="#FF282B28">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <ComboBox Name="Disk_ComboBox" SelectedIndex="0" Background="Transparent" Margin="5">
+                <ComboBoxItem Content="TEST!!!!"/>
+            </ComboBox>
 
-        </StackPanel>
+            <Button Grid.Column="1" Margin="5" Content="Start Analyzing!" FontWeight="Bold" Click="AnalyzeButton"/>
+            <Button Grid.Column="2" Margin="5" Content="Back" FontWeight="Bold" Click="BackButtonClicked"/>
 
-        <lvc:PieChart Name="Chart" Grid.Row="1" Series="{Binding SeriesCollection}"
-                      LegendLocation="Right" InnerRadius="100" Margin="0 15">
-            <lvc:PieChart.ChartLegend>
-                <lvc:DefaultLegend BulletSize="20"></lvc:DefaultLegend>
-            </lvc:PieChart.ChartLegend>
-            <lvc:PieChart.DataTooltip>
-                <lvc:DefaultTooltip BulletSize="20"></lvc:DefaultTooltip>
-            </lvc:PieChart.DataTooltip>
-        </lvc:PieChart>
+            <Border Margin="15,3" CornerRadius="8" BorderThickness="2" Grid.Column="5"
+                    BorderBrush="RoyalBlue" HorizontalAlignment="Right">
+                <TextBlock x:Name="Size_label"
+            VerticalAlignment="Center" FontSize="13" Margin="10,0">
+            Size: ...
+                </TextBlock>
+            </Border>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            
+            <Border Margin="10" CornerRadius="15" BorderThickness="3" BorderBrush="Green"
+                    Background="#7a323f32">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="80"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Border Margin="7.5" CornerRadius="7.5" BorderThickness="2" BorderBrush="SeaGreen">
+                        <TextBox HorizontalAlignment="Center" VerticalAlignment="Center" Background="Transparent"
+                                 BorderBrush="LightGreen" BorderThickness="2" IsReadOnly="True"
+                               Text="Current Path" FontWeight="Bold" Foreground="Snow" FontSize="20"
+                               FontStretch="Expanded" x:Name="Current_path_label"/>
+                    </Border>
+                    
+                    <ListView Margin="5" Background="Transparent" Foreground="Snow" x:Name="FileList"
+                          d:ItemsSource="{d:SampleData ItemCount=6}" MouseDown="FileList_MouseDoubleClick" 
+                          MouseDoubleClick="FileList_MouseDoubleClick" Grid.Row="1">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="BorderThickness" Value="0" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Name" Width="250" DisplayMemberBinding="{Binding file_name}"/>
+                                <GridViewColumn Header="Size" Width="150" DisplayMemberBinding="{Binding file_size}"/>
+                                <GridViewColumn Header="Attributes" Width="200" DisplayMemberBinding="{Binding file_attributes}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>    
+                
+            </Border>
+            
+            <lvc:PieChart Name="File_Chart" Grid.Column="1" Series="{Binding SeriesCollection}"
+              LegendLocation="Right" InnerRadius="100" Margin="0 15" 
+              Hoverable="False" BorderBrush="#FF752424" DataClick="File_Chart_DataClick"
+              >
+                <lvc:PieChart.DataTooltip>
+                    <lvc:DefaultTooltip Foreground="Black"/>
+                </lvc:PieChart.DataTooltip>
+                <lvc:PieChart.ChartLegend>
+                    <lvc:DefaultLegend Foreground="Snow"/>
+                </lvc:PieChart.ChartLegend>
+
+            </lvc:PieChart>
+        </Grid>
+        
     </Grid>
 </Window>
