@@ -85,7 +85,17 @@ namespace Windows_Disk_Analyzer
         
         void LoadDrive(string dir_path)
         {
-            Current_analyze = new Analyzer(dir_path);
+            try
+            {
+                Current_analyze = new Analyzer(dir_path);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             SeriesCollection.Clear();
 
 
@@ -183,6 +193,12 @@ namespace Windows_Disk_Analyzer
                 LoadDrive(file_presentors[pressed_column_index].files_Presentor.dir_info.FullName);
             }
 
+        }
+
+        private void OpenInExplorerPressed(object sender, RoutedEventArgs e)
+        {
+            var sender_btn = sender as Button;
+            Process.Start("explorer.exe", (sender_btn.DataContext as file_list_presentor).files_Presentor.dir_info.FullName);
         }
     }
 }
