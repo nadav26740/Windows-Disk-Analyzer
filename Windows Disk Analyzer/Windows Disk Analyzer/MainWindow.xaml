@@ -68,6 +68,14 @@
                         </ListView.ItemContainerStyle>
                         <ListView.View>
                             <GridView>
+                                <GridViewColumn Header="" Width="30">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="📂" Foreground="Orange" Background="#FF313535"
+                                                    FontFamily="Microsoft JhengHei UI" Click="OpenInExplorerPressed"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                                 <GridViewColumn Header="Name" Width="250" DisplayMemberBinding="{Binding file_name}"/>
                                 <GridViewColumn Header="Size" Width="150" DisplayMemberBinding="{Binding file_size}"/>
                                 <GridViewColumn Header="Attributes" Width="200" DisplayMemberBinding="{Binding file_attributes}"/>
