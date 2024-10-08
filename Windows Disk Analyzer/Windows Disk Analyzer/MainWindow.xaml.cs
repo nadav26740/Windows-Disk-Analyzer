@@ -181,12 +181,19 @@ namespace Windows_Disk_Analyzer
 
         private void File_Chart_DataClick(object sender, ChartPoint chartPoint)
         {
-            int pressed_column_index = (int)chartPoint.X;
-            if (file_presentors[pressed_column_index].files_Presentor.dir_info != null)
+            try
             {
-                LoadDrive(file_presentors[pressed_column_index].files_Presentor.dir_info.FullName);
-            }
+                int pressed_column_index = (int)chartPoint.X;
 
+                if (file_presentors[pressed_column_index].files_Presentor.dir_info != null)
+                {
+                    LoadDrive(file_presentors[pressed_column_index].files_Presentor.dir_info.FullName);
+                }
+            }
+            catch
+            {
+                return;
+            }            
         }
 
         private void OpenInExplorerPressed(object sender, RoutedEventArgs e)

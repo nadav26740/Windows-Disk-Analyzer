@@ -15,7 +15,7 @@ namespace Windows_Disk_Analyzer
     {
         // Dictonary that contains all the heavy folders that have been scanned so we won't rescan them
         private static Dictionary<string, Files_presentor> m_HeavyScanned = new Dictionary<string, Files_presentor>();
-        
+        private static Dictionary<string, DirectoryInfo?> m_untracked_paths = new Dictionary<string, DirectoryInfo?>();
         // current running analyze progress from 0 to 100
         public static float Scan_Progress { get; private set; }
 
@@ -42,11 +42,12 @@ namespace Windows_Disk_Analyzer
             long size = 0;
             // List for all the sub folder task scan it will do
             List<Task<long>> tasks = new List<Task<long>>();
-            
+            IEnumerable<FileInfo> files_in_dir;
+
             try
             {
                 // Trying to Get all the files in this directory
-                dir_info.EnumerateFiles();
+                files_in_dir = dir_info.EnumerateFiles();
             }
             catch (UnauthorizedAccessException err)
             {
@@ -56,13 +57,18 @@ namespace Windows_Disk_Analyzer
             // For debug
             string last_tested = "";
 
-            foreach (var file in dir_info.EnumerateFiles())
+            foreach (var file in files_in_dir)
             {
                 try
                 {
-                    if (!file.Exists)
+                    if (m_untracked_paths.ContainsKey(file.FullName))
+                    {
+                        continue;
+                    }
+                    else if (!file.Exists)
                     {
                         Debug.WriteLine(file.FullName + " File not exists");
+                        m_untracked_paths.Add(file.FullName, null);
                         continue;
                     }
 
@@ -80,21 +86,30 @@ namespace Windows_Disk_Analyzer
                 {
                     // For Debug
                     Debug.WriteLine("!" + last_tested + " >> " + err.Message);
+                    m_untracked_paths.Add(file.FullName, null);
                     return 0;
                 }
             }
 
             try
             {
-                foreach (var dir in dir_info.EnumerateDirectories())
+                IEnumerable<DirectoryInfo> dirs = dir_info.EnumerateDirectories();
+                foreach (var dir in dirs)
                 {
+
+
                     // For Debuging!
                     last_tested = "[DIR]" + dir.FullName;
                     
                     // Checking if the Folder exists and isn't system file
-                    if (!dir.Exists || dir.Attributes.ToString().IndexOf(FileAttributes.System.ToString()) != -1)
+                    if (m_untracked_paths.ContainsKey(dir.FullName))
+                    {
+                        continue;
+                    }
+                    else if (!dir.Exists || dir.Attributes.ToString().IndexOf(FileAttributes.System.ToString()) != -1)
                     {
                         Debug.WriteLine(dir.FullName + " Dir not exists" + (dir.Attributes.ToString().IndexOf("system")));
+                        m_untracked_paths.Add(dir.FullName, dir);
                         continue;
                     }
 
@@ -155,6 +170,11 @@ namespace Windows_Disk_Analyzer
 
             foreach (var file in m_dir_info.EnumerateFiles())
             {
+                if (m_untracked_paths.ContainsKey(file.FullName))
+                {
+                    continue;
+                }
+
                 Debug.Write("$$> " + file.FullName + " = " + BytesToString(file.Length));
                 Debug.WriteLine(" - Attributes: " + file.Attributes.ToString());
                 m_files_in_dir.Add(new Files_presentor { Name = file.Name, Attributes = file.Attributes.ToString(), size = file.Length });
@@ -162,14 +182,31 @@ namespace Windows_Disk_Analyzer
 
             foreach (var direc in m_dir_info.EnumerateDirectories())
             {
+                if (!direc.Exists)
+                {
+                    continue;
+                }
+
                 Debug.Write("DIR> " + direc.FullName);
                 try
                 {
+                    if (m_untracked_paths.ContainsKey(direc.FullName))
+                    {
+                        continue;
+                    }
+
                     long dir_size = m_HeavyScanned.ContainsKey(direc.FullName) ? m_HeavyScanned[direc.FullName].size : DeepSizeScan(direc);
 
 
                     m_dirsize += dir_size;
-                    m_files_in_dir.Add(new Files_presentor { Name = direc.Name, Attributes = direc.Attributes.ToString(), size = dir_size, dir_info = direc });
+                    m_files_in_dir.Add(
+                        new Files_presentor 
+                        {   
+                            Name = direc.Name, 
+                            Attributes = direc.Attributes.ToString(), 
+                            size = dir_size, dir_info = direc 
+                        });
+                    
                     if (dir_size > 3 * Math.Pow(1024, 3) && !m_HeavyScanned.ContainsKey(m_dir_info.FullName))
                     {
                         m_HeavyScanned.Add(direc.FullName, m_files_in_dir.Last());
