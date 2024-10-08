@@ -1,18 +1,12 @@
-﻿using LiveCharts.Defaults;
+﻿using LiveCharts;
+using LiveCharts.Defaults;
 using LiveCharts.Wpf;
-using LiveCharts;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Diagnostics;
 using System.IO;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Windows_Disk_Analyzer
 {
@@ -33,7 +27,7 @@ namespace Windows_Disk_Analyzer
             }
 
             public DriveInfo drive_info;
-            
+
             public override string ToString()
             {
                 return drive_info.Name + " [" + Analyzer.BytesToString(drive_info.TotalSize) + " / " + Analyzer.BytesToString(drive_info.TotalSize - drive_info.TotalFreeSpace) + "]";
@@ -42,7 +36,7 @@ namespace Windows_Disk_Analyzer
 
         class file_list_presentor
         {
-            public file_list_presentor(string name, long size , Files_presentor files_Presentor)
+            public file_list_presentor(string name, long size, Files_presentor files_Presentor)
             {
                 this.file_name = name;
                 this.file_size = Analyzer.BytesToString(size);
@@ -59,14 +53,14 @@ namespace Windows_Disk_Analyzer
 
         public MainWindow()
         {
-            
+
             InitializeComponent();
             File_Chart.AxisY.Add(new Axis { LabelFormatter = ToHumaanbleSizes });
             SeriesCollection = new SeriesCollection();
             ThreadPool.SetMaxThreads(6, 4);
             foreach (DriveInfo driver in DriveInfo.GetDrives())
             {
-                root_drives.Add(new Drive_presentor (driver));
+                root_drives.Add(new Drive_presentor(driver));
             }
 
             //adding values or series will update and animate the chart automatically
@@ -82,7 +76,7 @@ namespace Windows_Disk_Analyzer
         }
 
         public SeriesCollection SeriesCollection { get; set; }
-        
+
         void LoadDrive(string dir_path)
         {
             try
