@@ -196,6 +196,11 @@ namespace Windows_Disk_Analyzer
             }            
         }
 
+        /// <summary>
+        /// Opening the 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OpenInExplorerPressed(object sender, RoutedEventArgs e)
         {
             var sender_btn = sender as Button;

@@ -228,6 +228,10 @@ namespace Windows_Disk_Analyzer
             path = dirInfo.FullName;
         }
 
+        /// <summary>
+        /// Adding To progress bar to make sure about the track
+        /// </summary>
+        /// <param name="amount">Amount to increament</param>
         private static void Add_To_Progress(float amount)
         {
             Scan_Progress += amount;

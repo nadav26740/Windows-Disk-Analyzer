@@ -4,8 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Windows_Disk_Analyzer" xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
-        mc:Ignorable="d" Background="#3d3d3d" Foreground="Snow"
+        mc:Ignorable="d" Foreground="Snow"
         Title="MainWindow" MinHeight="600" MinWidth="1100">
+    <Window.Background>
+        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#FF3F4846" Offset="0"/>
+            <GradientStop Color="#FF3A3F44" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.Background>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
@@ -38,7 +44,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            
+
             <Border Margin="10" CornerRadius="15" BorderThickness="3" BorderBrush="Green"
                     Background="#7a323f32">
                 <Grid>
@@ -52,7 +58,7 @@
                                Text="Current Path" FontWeight="Bold" Foreground="Snow" FontSize="20"
                                FontStretch="Expanded" x:Name="Current_path_label"/>
                     </Border>
-                    
+
                     <ListView Margin="5" Background="Transparent" Foreground="Snow" x:Name="FileList"
                           d:ItemsSource="{d:SampleData ItemCount=6}" MouseDown="FileList_MouseDoubleClick" 
                           MouseDoubleClick="FileList_MouseDoubleClick" Grid.Row="1">
@@ -82,10 +88,10 @@
                             </GridView>
                         </ListView.View>
                     </ListView>
-                </Grid>    
-                
+                </Grid>
+
             </Border>
-            
+
             <lvc:PieChart Name="File_Chart" Grid.Column="1" Series="{Binding SeriesCollection}"
               LegendLocation="Right" InnerRadius="100" Margin="0 15" 
               Hoverable="False" BorderBrush="#FF752424" DataClick="File_Chart_DataClick"
@@ -99,6 +105,6 @@
 
             </lvc:PieChart>
         </Grid>
-        
+
     </Grid>
 </Window>
