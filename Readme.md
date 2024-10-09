@@ -25,6 +25,7 @@
 * Make UI Look better
 * Add resource limiter
 * Code Optimize
+* Add Core Documentation
 
 <br/>
 
