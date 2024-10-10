@@ -4,20 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Windows_Disk_Analyzer" xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
-        mc:Ignorable="d" Foreground="Snow"
+        mc:Ignorable="d" Foreground="Snow" Background="#022b3a"
         Title="MainWindow" MinHeight="600" MinWidth="1100">
-    <Window.Background>
-        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="#FF3F4846" Offset="0"/>
-            <GradientStop Color="#FF3A3F44" Offset="1"/>
-        </LinearGradientBrush>
-    </Window.Background>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Height="35" Background="#FF282B28">
+        <Grid Grid.Row="0" Height="35" Background="#051923">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
@@ -45,16 +39,16 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <Border Margin="10" CornerRadius="15" BorderThickness="3" BorderBrush="Green"
-                    Background="#7a323f32">
+            <Border Margin="10" CornerRadius="15" BorderThickness="3" BorderBrush="#0582ca"
+                    Background="#003554">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="80"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <Border Margin="7.5" CornerRadius="7.5" BorderThickness="2" BorderBrush="SeaGreen">
+                    <Border Margin="7.5" CornerRadius="7.5" BorderThickness="2" BorderBrush="#0582ca">
                         <TextBox HorizontalAlignment="Center" VerticalAlignment="Center" Background="Transparent"
-                                 BorderBrush="LightGreen" BorderThickness="2" IsReadOnly="True"
+                                 BorderBrush="#00a6fb" BorderThickness="2" IsReadOnly="True"
                                Text="Current Path" FontWeight="Bold" Foreground="Snow" FontSize="20"
                                FontStretch="Expanded" x:Name="Current_path_label"/>
                     </Border>
@@ -77,7 +71,7 @@
                                 <GridViewColumn Header="" Width="30">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Content="📂" Foreground="Orange" Background="#FF313535"
+                                            <Button Content="📂" Foreground="#00a6fb" Background="#FF313535"
                                                     FontFamily="Microsoft JhengHei UI" Click="OpenInExplorerPressed"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
