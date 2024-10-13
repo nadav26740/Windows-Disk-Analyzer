@@ -181,6 +181,12 @@ namespace Windows_Disk_Analyzer
 
         private void File_Chart_DataClick(object sender, ChartPoint chartPoint)
         {
+            // Bug cause event appear before chart loaded
+            if (chartPoint == null)
+            {
+                return;
+            }
+
             try
             {
                 int pressed_column_index = (int)chartPoint.X;

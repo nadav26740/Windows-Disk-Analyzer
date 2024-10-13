@@ -22,8 +22,10 @@
                 <ComboBoxItem Content="TEST!!!!"/>
             </ComboBox>
 
-            <Button Grid.Column="1" Margin="5" Content="Start Analyzing!" FontWeight="Bold" Click="AnalyzeButton"/>
-            <Button Grid.Column="2" Margin="5" Content="Back" FontWeight="Bold" Click="BackButtonClicked"/>
+            <Button Style="{DynamicResource MainButtonsStyle}" Background="AntiqueWhite"
+                    Grid.Column="1" Margin="5" Content="Start Analyzing!" FontWeight="Bold" Click="AnalyzeButton"/>
+            <Button Style="{DynamicResource MainButtonsStyle}" 
+                    Grid.Column="2" Margin="5" Content="Back" FontWeight="Bold" Click="BackButtonClicked"/>
 
             <Border Margin="15,3" CornerRadius="8" BorderThickness="2" Grid.Column="5"
                     BorderBrush="RoyalBlue" HorizontalAlignment="Right">
