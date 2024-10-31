@@ -25,7 +25,8 @@
 > * After pressing the software will start mapping the size of all the files it has access to in the selected drive
 > * When the Analyze has finished a list of all the directories and files in the root of the driver will pop up
 > <br/><br/>
->  Now you able to press any directory in the list *(you can also press on the pie chart)* <br/> and the software will display the directories and files inside the selected directory 
+>  Now you able to press any directory in the list *(you can also press on the pie chart)* <br/>
+> and the software will display the directories and files inside the selected directory 
 
 <br/>
 
@@ -44,6 +45,11 @@
 * ### .Net Core 8 (For the smaller version)
 * ### LiveCharts.WPF \[0.9.8\]
 * ### LiveCharts \[0.9.8\]
+
+<br/>
+
+## [Core Documentation](.docs/Core.md)  
+
 
 ## License
 ### [Apache License version 2.0, January 2004](./LICENSE)
