@@ -6,8 +6,9 @@
 </div>
 
 ## `Struct Files_presentor`
+
 > This struct purpose is to hold all the need information about any file so that we could more simply represent it at the UI
->> ```cs
+>> ```c#
 >>    public string Name; // The Name of the Directory/File
 >>    public string Attributes; // System attributes of the file
 >>    public long size; // The Total Size of the file/Directory
