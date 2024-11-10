@@ -21,7 +21,7 @@
 > The Analyzer is the main class at the core and should take care of the drive mapping include showing the user the giving the window everything he needs 
 > ### **How it works**
 > the analyzer doing a recursive mapping to every folder in the system and summing up the sizes of everything and also saving every big file in dictionary so it wouldn't need to remap it again 
->>*By saving only the big folders that already been mapped i am able to optimize the speed of the system and also not using too much memory like saving all the folders at the drive*
+>> *By saving only the big folders that already been mapped i am able to optimize the speed of the system and also not using too much memory like saving all the folders at the drive*
 
 # How To Use:
 > * First you need to create new object of the class [Analyzer](#analyzer) and to specify the path of the directory you want to map<br/>
@@ -33,24 +33,30 @@
 
 # Methods
 ## Get_elements_in_dir()
-> TODO
+> `` public List<Files_presentor> Get_elements_in_dir() `` <br/>
+> Returns a list of [File_Presentor](#struct-files_presentor) that represent all the elements in the dir
 
 ## get_Dir_Size()
-> TODO
+> `` public long get_Dir_Size()`` <br/>
+> Returns the size of the current directory in bytes
 
 ## get_Formated_size()
-> TODO
+> `` public string get_Formated_size() `` <br/>
+> Returning the current directory size in Formatted scale string (B, KB, MB ...)
+> By using the function [BytesToString](#static-bytestostringlong-bytecount) 
 
 ## GetParent()
-> TODO
+> `` public string GetParent() `` <br/>
+> Returning a string contains the path to parent directory of the current directory  
 
 ## GetCurrentPath()
-> TODO
+> ``public string GetCurrentPath()`` <br/>
+> Returning a string that contains the path to the current directory 
 
-## BytesToString(long byteCount)
-> TODO
-
-## Get_elements_in_dir()
-> TODO
+## \<Static\> BytesToString(long byteCount)
+> `` public static string BytesToString(long byteCount) `` <br/>
+> Getting a long int that should represent bytes and returning a string presenting the size in scale format (KB, MB, GB, TB) 
 
 ## \<private\> DeepSizeScan(DirectoryInfo dir_info)
+> `` static long DeepSizeScan(DirectoryInfo dir_info) `` <br/>
+> TODO
