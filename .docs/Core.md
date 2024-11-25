@@ -37,7 +37,7 @@
 > Returns a list of [File_Presentor](#struct-files_presentor) that represent all the elements in the dir
 
 ## get_Dir_Size()
-> `` public long get_Dir_Size()`` <br/>
+> `` public long get_Dir_Size() `` <br/>
 > Returns the size of the current directory in bytes
 
 ## get_Formated_size()
@@ -59,4 +59,10 @@
 
 ## \<private\> DeepSizeScan(DirectoryInfo dir_info)
 > `` static long DeepSizeScan(DirectoryInfo dir_info) `` <br/>
-> TODO
+> ***The Deep scan is the core function of the Mapping system***<br/>
+> the function purpose is to run size mapping on every directory and file in the tree recursively by recall the function on each directory at the File tree and return the current root size <br/><br/>
+> The function also keep in dictionary all the directories that has been scanned and their size is over [BIG_DIRECTORY_SIZE_GB](#static-field-float-big_directory_size_gb) so it won't remap big directories and by that save optimize the runtime of navigating between different directories without extreme memory usage. <br/>
+
+## \<Static Field\> float BIG_DIRECTORY_SIZE_GB 
+> Determinate the size of what to consider as big directory in GB
+>> *used in [DeepSizeScan](#private-deepsizescandirectoryinfo-dir_info) for optimization*
