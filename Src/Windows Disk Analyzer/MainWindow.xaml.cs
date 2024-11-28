@@ -30,7 +30,14 @@ namespace Windows_Disk_Analyzer
 
             public override string ToString()
             {
-                return drive_info.Name + " [" + Analyzer.BytesToString(drive_info.TotalSize) + " / " + Analyzer.BytesToString(drive_info.TotalSize - drive_info.TotalFreeSpace) + "]";
+                try
+                {
+                    return drive_info.Name + " [" + Analyzer.BytesToString(drive_info.TotalSize) + " / " + Analyzer.BytesToString(drive_info.TotalSize - drive_info.TotalFreeSpace) + "]";
+                }
+                catch
+                {
+                    return "Error Failed to represent drive";
+                }
             }
         }
 
