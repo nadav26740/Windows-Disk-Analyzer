@@ -3,9 +3,9 @@
 # **Windows Disk Analyzer**
 ### Simple analyze system to map the disk usage of files in the disk for windows
 
-![CSharp image](https://ziadoua.github.io/m3-Markdown-Badges/badges/CSharp/csharp1.svg)
-![dotnet image](https://ziadoua.github.io/m3-Markdown-Badges/badges/dotNET/dotnet1.svg)
-![Windows Image](https://ziadoua.github.io/m3-Markdown-Badges/badges/Windows/windows1.svg)
+![CSharp icon](https://ziadoua.github.io/m3-Markdown-Badges/badges/CSharp/csharp1.svg)
+![dotnet icon](https://ziadoua.github.io/m3-Markdown-Badges/badges/dotNET/dotnet1.svg)
+![Windows icon](https://ziadoua.github.io/m3-Markdown-Badges/badges/Windows/windows1.svg)
 <br/>
 <!--Badges From https://github.com/ziadOUA/m3-Markdown-Badges-->
 
@@ -13,7 +13,7 @@
 </div>
 
 ## About
-> The system using C#.net and System.IO library to map the files sizes,<br/>
+> The system using C# Core and System.IO library to map the files sizes,<br/>
 > When the user pressing Analyze the system Start mapping by recursive<br/> 
 > mapping every directory at the drive <br/>
 
