@@ -22,6 +22,8 @@ namespace Windows_Disk_Analyzer
 
     public class Analyzer
     {
+        static public float BIG_DIRECTORY_SIZE_GB = 3 ;
+
         static private Dictionary<string, Files_presentor> HeavyScanned = new Dictionary<string, Files_presentor>();
 
         private static long DeepSizeScan(DirectoryInfo dir_info)
@@ -96,10 +98,10 @@ namespace Windows_Disk_Analyzer
                     task.Wait();
                     size += task.Result;
                 }
-                catch (Exception err) { Debug.WriteLine("ERROR in deepsearch [" + dir_info.FullName + "]" + err.Message); }
+                catch (Exception err) { Debug.WriteLine("ERROR in Deepsearch [" + dir_info.FullName + "]" + err.Message); }
             }
 
-            if (size > 3 * Math.Pow(1024, 3) && !HeavyScanned.ContainsKey(dir_info.FullName))
+            if (size > BIG_DIRECTORY_SIZE_GB * Math.Pow(1024, 3) && !HeavyScanned.ContainsKey(dir_info.FullName))
             {
                 HeavyScanned.Add(dir_info.FullName, new Files_presentor 
                     {   Attributes=dir_info.Attributes.ToString(),
